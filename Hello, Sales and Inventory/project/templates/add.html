@@ -1,0 +1,182 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    INVENTORY
+{% endblock %}
+
+{% block main %}
+
+<div class="d-flex justify-content-center mb-3">
+  <form class="d-flex" method="get" action="/add">
+    <input class="form-control me-2" type="text" placeholder="Search Item Name" name="q" aria-label="Search">
+    <button class="btn btn-outline-success" type="submit">Search</button>
+  </form>
+</div>
+
+
+  <!--ADD Modal -->
+  <div class="modal fade" id="addItemModal" tabindex="-1" aria-labelledby="addItemModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addItemModalLabel">Add Item</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form action="/add" method="post">
+          <div class="modal-body">
+              <table class="table">
+                  <tbody>
+                      <tr>
+                          <th>Item Name:</th>
+                          <td><input autocomplete="off" autofocus class="form-control" id="itemName" name="itemName" placeholder="Item Name" type="text"></td>
+                      </tr>
+                      <tr>
+                          <th>Description:</th>
+                          <td><input class="form-control" id="description" name="description" placeholder="Description" type="text"></td>
+                      </tr>
+                      <tr>
+                          <th>Category:</th>
+                          <td>
+                              <select class="form-select" id="category" name="category" required>
+                                  <option value="Electronics">Electronics</option>
+                                  <option value="Clothing">Clothing</option>
+                                  <option value="Books">Books</option>
+                                  <option value="Home & Garden">Home & Garden</option>
+                              </select>
+                          </td>
+                      </tr>
+                      <tr>
+                          <th>Price:</th>
+                          <td><input class="form-control" id="price" name="price" placeholder="Price" type="number" step="0.01" min="0"></td>
+                      </tr>
+                      <tr>
+                          <th>Stocks:</th>
+                          <td><input class="form-control" id="stocks" name="stocks" placeholder="Stocks" type="number" min="0"></td>
+                      </tr>
+                  </tbody>
+              </table>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Add Item</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+<!--EDIT Modal -->
+<div class="modal fade" id="editItemModal" tabindex="-1" aria-labelledby="editItemModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editItemModalLabel">Edit Item</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form action="/edit" method="post">
+        <div class="modal-body">
+            <table class="table">
+                <tbody>
+                    <tr>
+
+                      <th>Item ID:</th>
+                      <td><input autocomplete="off" autofocus class="form-control" id="id" name="id" placeholder="Item ID" type="text"></td>
+                    </tr>
+                    <tr>
+                        <th>Item Name:</th>
+                        <td><input autocomplete="off" autofocus class="form-control" id="itemName" name="itemName" placeholder="Item Name" type="text"></td>
+                    </tr>
+                    <tr>
+                        <th>Description:</th>
+                        <td><input class="form-control" id="description" name="description" placeholder="Description" type="text"></td>
+                    </tr>
+                    <tr>
+                        <th>Category:</th>
+                        <td>
+                            <select class="form-select" id="category" name="category" required>
+                                <option value="Electronics">Electronics</option>
+                                <option value="Clothing">Clothing</option>
+                                <option value="Books">Books</option>
+                                <option value="Home & Garden">Home & Garden</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Price:</th>
+                        <td><input class="form-control" id="price" name="price" placeholder="Price" type="number" step="0.01" min="0"></td>
+                    </tr>
+                    <tr>
+                        <th>Stocks:</th>
+                        <td><input class="form-control" id="stocks" name="stocks" placeholder="Stocks" type="number" min="0"></td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+          <td>
+            <form action="/edit" method="post">
+              <button class="btn btn-primary edit d-none" type="button" data-bs-toggle="modal" data-bs-target="#editItemModal"></button>
+            </form>
+          </td>
+
+          <button type="submit" class="btn btn-primary">Edit Item</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+<table class="table" method="GET">
+    <thead>
+      <tr>
+        <th scope="col">Item ID</th>
+        <th scope="col">Item Name</th>
+        <th scope="col">Description</th>
+        <th scope="col">Category</th>
+        <th scope="col">Price</th>
+        <th scope="col">Stocks</th>
+        <th scope="col"><button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addItemModal">
+            Add Item
+          </button></th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for item in inventory%}
+      <tr>
+        <td>{{ item.id }}</td>
+        <td>{{ item.itemName }}</td>
+        <td>{{ item.description }}</td>
+        <td>{{ item.category }}</td>
+        <td>{{ item.price }}</td>
+        <td>{{ item.stocks }}</td>
+
+        <td><form action="/edit" method="post">
+          <input name="id" type="hidden" value="{{ item.id }}">
+          <button class="btn btn-primary edit" type="button" data-bs-toggle="modal" data-bs-target="#editItemModal">Edit</button>
+      </form></td>
+
+
+        <td><form action="/remove" method="post">
+            <input  name="id" type="hidden" value="{{ item.id }}">
+            <button class="delete-btn" type="submit">Delete</button>
+        </form></button></td>
+
+    {% endfor %}
+    </tbody>
+  </table>
+
+
+
+{% endblock %}

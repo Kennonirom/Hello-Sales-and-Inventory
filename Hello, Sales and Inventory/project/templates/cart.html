@@ -1,0 +1,241 @@
+{% extends "layout.html" %}
+
+{% block title %}
+PROCESS
+{% endblock %}
+
+{% block main %}
+
+
+<div style="border: 2px solid #ccc; max-height: 400px; overflow-y: scroll;">
+  <table class="table" method="GET" style="border-collapse: collapse; width: 100%;">
+    <thead>
+      <tr>
+        <th scope="col">Transaction Code</th>
+        <th scope="col">Date Time</th>
+        <th scope="col">Item Id</th>
+        <th scope="col">Item Name</th>
+        <th scope="col">Quantity</th>
+        <th scope="col">Price</th>
+        <th scope="col">Overall Total:</th>
+
+
+        <th scope="col" ><div id="highlight">{{ cart|sum(attribute='total') }}</div></th>
+
+
+
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in cart %}
+      <tr>
+        <td>{{ item.transaction_code }}</td>
+        <td>{{ item.date_time }}</td>
+        <td>{{ item.item_code }}</td>
+        <td>{{ item.item_name }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>{{ item.price }}</td>
+        <td>{{ item.total }}</td>
+
+
+
+
+
+        <td>
+          <form action="/delete_item" method="post">
+            <input  name="transaction_code" type="hidden" value="{{ item.transaction_code }}">
+            <button class="delete-btn" type="submit">Dlt Item</button>
+        </form></button>
+        </td>
+
+
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+
+<div class="row">
+  <div class="col-md-6">
+
+
+
+
+
+    <table class="table" method="GET">
+      <thead>
+        <tr>
+
+          <th scope="col">Item Name</th>
+          <th scope="col">Description</th>
+          <th scope="col">Category</th>
+          <th scope="col">Price</th>
+          <th scope="col">Stocks</th>
+          <th scope="col">Quantity</th>
+          <th scope="col"></th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in inventory %}
+        <tr>
+
+          <td>{{ item.itemName }}</td>
+          <td>{{ item.description }}</td>
+          <td>{{ item.category }}</td>
+          <td>{{ item.price }}</td>
+          <td>{{ item.stocks }}</td>
+          <td>
+            <form method="POST" action="/add_to_cart">
+              <div class="mb-3">
+
+                <input type="number" class="form-control" id="quantity" name="quantity" value="1" min="1" max="{{ item.stocks }}">
+
+                <input type="hidden" name="item_name" value="{{ item.itemName }}">
+                <input type="hidden" name="price" value="{{ item.price }}">
+
+              </div>
+
+          </td>
+          <td></td>
+          <td>
+            <button type="submit" name="item_code" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addItemModal" value="{{ item.id }}">
+              Add Item
+            </button>
+          </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+
+
+
+
+
+
+
+  </div>
+
+  <div class="col-md-6">
+
+
+
+    <div class="d-flex justify-content-center align-items-center">
+
+
+
+      <form action="/process" method="post">
+        <input name="process" type="hidden">
+        <button class="btn btn-primary process" type="button" data-bs-toggle="modal" data-bs-target="#processItemModal">Process1</button>
+      </form>
+
+
+      <!-- PROCESS -->
+<div class="modal fade" id="processItemModal" tabindex="-1" aria-labelledby="processItemModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="processItemModalLabel">Process Item</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+
+
+
+        <form action="/process" method="post">
+          <div class="mb-3">
+            <h6>Amount Due:</h6>
+            <h4 scope="col" ><div name= "amountDue" id="highlight">{{ cart|sum(attribute='total') }}</div></h4>
+
+          </div>
+          <div class="mb-3">
+            <label for="amountPaid" class="form-label">Amount Paid:</label>
+            <input type="number" class="form-control" id="amountPaid" name="amountPaid" placeholder="Enter amount paid">
+          </div>
+          <div class="mb-3">
+            <label for="change" class="form-label">Change:</label>
+            <input type="number" class="form-control" id="change" name="change" readonly>
+          </div>
+        </form>
+
+
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+        <td>
+          <form action="/process" method="post">
+
+            <button class="btn btn-primary edit d-none" type="button" data-bs-toggle="modal" data-bs-target="#processItemModal"></button>
+            <button id="processBtn" type="submit" class="btn btn-primary" disabled>Process2</button>
+          </form>
+        </td>
+
+
+        <script>
+          const amountDue = parseInt(document.getElementById("highlight").textContent);
+          const amountPaidField = document.getElementById("amountPaid");
+          const changeField = document.getElementById("change");
+
+          amountPaidField.addEventListener("input", function() {
+            const amountPaid = parseInt(amountPaidField.value);
+            const change = amountPaid - amountDue;
+            changeField.value = change;
+          });
+        </script>
+
+
+<script>
+  document.getElementById("amountPaid").addEventListener("input", function() {
+    var amountDue = parseInt(document.getElementById("highlight").textContent);
+    var amountPaid = parseInt(document.getElementById("amountPaid").value);
+    var change = amountPaid - amountDue;
+    document.getElementById("change").value = change;
+
+    var processBtn = document.getElementById("processBtn");
+    if (change < 0) {
+      processBtn.disabled = true;
+    } else {
+      processBtn.disabled = false;
+    }
+  });
+</script>
+
+
+      </div>
+    </form>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+      <form action="/cart" method="get" id="search-form">
+        <div class="mb-3 mt-3">
+          <input autocomplete="on" autofocus class="form-control mx-auto w-auto" id="item_name" name="q" placeholder="Search Item Name" type="text" oninput="submitForm()">
+        </div>
+      </form>
+
+    <script>
+    function submitForm() {
+      document.getElementById("search-form").submit();
+    }
+    </script>
+
+
+
+
+
+
+  </div>
+</div
+
+
+{% endblock %}

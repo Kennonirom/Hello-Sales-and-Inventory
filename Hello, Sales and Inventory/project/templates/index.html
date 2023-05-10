@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Sales
+{% endblock %}
+
+{% block main %}
+
+<div style="text-align: right;">
+  <h4>Total Yearly Sales:</h4>
+  <h4 id="highlight">{{ transactions|sum(attribute='total') }}</h4>
+</div>
+
+<table class="table" method="GET">
+  <thead>
+    <tr>
+
+      <th scope="col">Transaction Code</th>
+      <th scope="col">Date Time</th>
+      <th scope="col">Item Id</th>
+      <th scope="col">Item Name</th>
+      <th scope="col">Item quantity</th>
+
+      <th scope="col">Price</th>
+      <th scope="col">Total</th>
+
+    </tr>
+  </thead>
+  <tbody>
+  {% for item in transactions%}
+    <tr>
+
+      <td>{{ item.id }}</td>
+      <td>{{ item.date_time }}</td>
+      <td>{{ item.item_id }}</td>
+      <td>{{ item.item_name }}</td>
+      <td>{{ item.quantity }}</td>
+      <td>{{ item.price }}</td>
+      <td>{{ item.total }}</td>
+
+
+  {% endfor %}
+  </tbody>
+</table>
+
+
+
+{% endblock %}
